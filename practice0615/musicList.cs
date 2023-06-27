@@ -8,8 +8,9 @@ namespace practice0615
         public static void musicStart(int type ,string musicName)
         {
             bool IsAlive = true;
-            int musicTime=Convert.ToInt32(DateTime.Now.ToString("mm"));
-            musicTime = musicTime+3;
+           
+            int mutime = 0;
+            int setTime = 180;
             WindowsMediaPlayer player = new WindowsMediaPlayer();
          
 
@@ -32,12 +33,19 @@ namespace practice0615
 
                 while (true)
                 {
-                    if(musicTime == Convert.ToInt32(DateTime.Now.ToString("mm")))
+                    if (mutime == setTime)
                     {
-                        
                         player.controls.stop();
                         player.close();
-                        break ;
+                        break;
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                        mutime ++;
+                    }
+                        
+                       
                     }
                     // 스레드 종료 여부
                     if (IsAlive)
@@ -46,7 +54,7 @@ namespace practice0615
                     }
                   
 
-                }
+                
 
              });
 

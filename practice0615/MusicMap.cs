@@ -51,17 +51,21 @@ namespace cshap
                 Console.SetCursorPosition(4, i+2);
                 for (int j = 0; j < 21; j++)
                 {
-                    if (j % 5 == 0)
+                    if (strArray[i, j] == "│ ")
                     {
                         Console.ForegroundColor = ConsoleColor.Blue;
                         Console.Write($"{strArray[i, j]}");
 
                     }
-                    else
+                    else if(strArray[i, j] == "==")
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write($"{strArray[i, j]}");
 
+                    }
+                    else
+                    {
+                        Console.Write($"{strArray[i, j]}");
                     }
 
 
@@ -125,7 +129,7 @@ namespace cshap
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.CursorVisible = false;
           
-            Console.SetCursorPosition(6, 29);
+            Console.SetCursorPosition(6, 28);
             Console.Write("──────────────────────────────────────");
 
             Console.ResetColor();

@@ -9,32 +9,50 @@ namespace practice0615
     {
        
         Timer timer;
+        Timer timer2;
         string[,] firstf = new string[50, 50];
         string[,] musicNote = new string[50, 50];
         int[,] MusicAllNote = new int[50, 50];
         int countX = 0;//스왑라인 X
         int countY = 0;//스왑라인 y
+        int countX2 = 0;//스왑라인 X
+        int countY2 = 0;//스왑라인 y
         int score = 0;//점수
         int combo = 0; // 콤보 
         int scoreType = 0;
         int notLine = 0;
-
+        musicMap musicMap = new musicMap();// 뮤직 게임 화면 
+        musicList musicList = new musicList();//음악재생
+        NoteMove noteMove = new NoteMove();// 뮤직 노트
 
         object lockObject = new object(); // 동시에 접근하는 변수 처리
         List<ConsoleKey> pressedKeys = new List<ConsoleKey>();// 동시에 눌린 키들을 저장할 리스트
 
-        public int Play(string muName ,int muNumber)
+        public int Play(string muName ,int muNumber,int speed)
         {
             Console.SetWindowSize(100, 40);
             score = 0;//점수
             notLine = 0; // 음악 라인
-            musicList musicList = new musicList();//음악재생
-            NoteMove noteMove = new NoteMove();// 뮤직 노트
-            musicMap musicMap = new musicMap();// 뮤직 게임 화면 
+
+            int timerspeed = 20;
+            if (speed == 1)
+            {
+                timerspeed = 18;
+            }
+            else if (speed == 2)
+            {
+                timerspeed = 16;
+            }
+            else if (speed == 3)
+            {
+                timerspeed = 14;
+            }
             // 타이머 생성 및 시작
             TimerCallback callback = TimerCallbackMethod; // 노트 스왑
-            timer = new Timer(callback, null, 0, 14); // 1초(1000밀리초) 간격으로 콜백 메서드 실행
-            
+          
+
+            timer = new Timer(callback, null, 0, timerspeed); // 1초(1000밀리초) 간격으로 콜백 메서드 실행
+
             musicMap.GameMap(ref firstf); //게임 맵
             Console.CursorVisible = false;
 
@@ -51,25 +69,46 @@ namespace practice0615
             //노트 넣기
             MusicAllNote =noteMove.MusicNote(muName);
 
+          
             
-           
             while (true)
             {
-            
+
+
+                musicMap.DrawScoreLine();
+                if (firstf[30, 2] == "==" || firstf[30, 7] == "==" || firstf[30, 13] == "==" || firstf[30, 18] == "==")
+                {
+                    combo = 0;
+                    scoreType = 3;
+                }
+              
+               
+
+
+                if (notLine == 125)
+                {
+
+                    timer.Dispose();
+                    
+                    break;
+                }
                 Console.SetCursorPosition(50, 17);
                 Console.Write(score);
                 Console.SetCursorPosition(50, 22);
                 Console.Write("      ");
-                Console.SetCursorPosition(50, 22);          
+                Console.SetCursorPosition(50, 22);
                 Console.Write(combo);
 
                 Console.SetCursorPosition(50, 12);
                 Console.Write("         ");
                 Console.SetCursorPosition(50, 12);
+
+
                 if (scoreType == 1)
                 {
                     Console.Write("Perfect");
-                }else if (scoreType == 2)
+                }
+                else if (scoreType == 2)
                 {
                     Console.Write("Good");
                 }
@@ -77,60 +116,7 @@ namespace practice0615
                 {
                     Console.Write("Miss");
                 }
-              
-                if (firstf[30, 2] == "==" || firstf[30, 7] == "==" || firstf[30, 13] == "==" || firstf[30, 18] == "==")
-                {
-                    combo = 0;
-                    scoreType = 3;
-                }
                 musicMap.Anim();
-                // 노트 입력
-                for (int j = 1; j < 22; j++)
-                {
-
-                    if (j % 5 == 0)
-                    {
-
-                    }
-                    else
-                    {
-
-                        countY = j;
-                        // 뮤직 노트 체크
-                        
-                        if (MusicAllNote[notLine, 0] == 1 && j >0  && j< 5 )
-                        {
-                            firstf[0, j] = "==";
-                        }
-                        if (MusicAllNote[notLine, 1] == 1 && j >5 &&j < 10)
-                        {
-                            firstf[0, j] = "==";
-                        }
-                        if (MusicAllNote[notLine, 2] == 1 && j >10 && j <15)
-                        {
-                            firstf[0, j] = "==";
-                        }
-                        if (MusicAllNote[notLine, 3] == 1 && j >15 && j <20)
-                        {
-                            firstf[0, j] = "==";
-                        }
-
-                        //마지막 스왑 노트 지움
-                        firstf[30, j] = "  ";
-                    }            
-
-                }
-               
-
-              
-                if(notLine == 125)
-                {
-
-                    timer.Dispose();
-                    
-                    break;
-                }
-                
                 Console.SetCursorPosition(0, 0);
                 musicMap.GameView(ref firstf);
 
@@ -144,15 +130,9 @@ namespace practice0615
         //리얼 타입 노트 내려가는 로직
         void TimerCallbackMethod(object state)
         {
-            if (countX == 30)
+            // 노트 입력
+            for (int j = 1; j < 22; j+=5)
             {
-                notLine++;
-                countX = 0;
-
-            }
-            for (int j = 1; j < 21; j++)
-            {
-
 
                 if (j % 5 == 0)
                 {
@@ -160,15 +140,99 @@ namespace practice0615
                 }
                 else
                 {
+
                     countY = j;
+                    // 뮤직 노트 체크
+
+                    if (MusicAllNote[notLine, 0] == 1 && j > 0 && j < 5)
+                    {
+                        firstf[0, j] = "==";
+                        firstf[0, j+1] = "==";
+                        firstf[0, j+2] = "==";
+                        firstf[0, j+3] = "==";
+                    }
+                    if (MusicAllNote[notLine, 1] == 1 && j > 5 && j < 10)
+                    {
+                        firstf[0, j] = "==";
+                        firstf[0, j + 1] = "==";
+                        firstf[0, j + 2] = "==";
+                        firstf[0, j + 3] = "==";
+                    }
+                    if (MusicAllNote[notLine, 2] == 1 && j > 10 && j < 15)
+                    {
+                        firstf[0, j] = "==";
+                        firstf[0, j + 1] = "==";
+                        firstf[0, j + 2] = "==";
+                        firstf[0, j + 3] = "==";
+                    }
+                    if (MusicAllNote[notLine, 3] == 1 && j > 15 && j < 20)
+                    {
+                        firstf[0, j] = "==";
+                        firstf[0, j + 1] = "==";
+                        firstf[0, j + 2] = "==";
+                        firstf[0, j + 3] = "==";
+                    }
+
+                    //마지막 스왑 노트 지움
+                    firstf[30, j] = "  ";
+                    firstf[30, j+1] = "  ";
+                    firstf[30, j+2] = "  ";
+                    firstf[30, j+3] = "  ";
+                }
+
+            }
+
+            if (countX == 30)
+            {
+                notLine++;
+                countX = 0;
+
+            }
+            
+                
+            for (int j = 1; j < 21; j+=5)
+            {
+
+
+                if (firstf[countX, j] == "==")
+                {                   
+                    countY = j;
+                    Swap();
+                    countY = j+1;
+                    Swap();
+                    countY = j+2;
+                    Swap();
+                    countY = j+3;
                     Swap();
                 }
 
             }
             countX++;
-           
-        }
 
+            if(countX == 3)
+            {
+                for (int j = 1; j < 21; j += 5)
+                {
+
+
+                    if (firstf[countX, j] == "==")
+                    {
+                        countY = j;
+                        Swap();
+                        countY = j + 1;
+                        Swap();
+                        countY = j + 2;
+                        Swap();
+                        countY = j + 3;
+                        Swap();
+                    }
+
+                }
+                countX++;
+            }
+            
+        }
+       
         //내려가는 노트 스왑
         void Swap()
         {
@@ -178,11 +242,11 @@ namespace practice0615
             firstf[countX + 1, countY] = a;
          
         }
-
+      
 
 
         //키입력
-         void ReadInput()
+        void ReadInput()
         {
             while (true)
             {

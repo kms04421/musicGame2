@@ -14,7 +14,7 @@ namespace practice0615
         int chkNumber = 0;
 
         List<MusicSt> Musiclist = new List<MusicSt>();
-      
+        int speed = 2;
         public void Manu()
         {
             
@@ -24,6 +24,7 @@ namespace practice0615
             Musiclist.Add(new MusicSt("CROSS†OVER", 0));
             while (true)
             {
+                
                 Console.CursorVisible = false;
                 if(chkNumber == 0)
                 {
@@ -43,13 +44,13 @@ namespace practice0615
                     Console.SetCursorPosition(28, 11);
                     Console.Write("                              ");
                     Console.SetCursorPosition(28, 11);
-                    Console.Write("{0,-13}          Score :{1,-10}", Musiclist[chkNumber-1].MusicName, Musiclist[chkNumber-1].MusicScore);
+                    Console.Write("{0,-13}          Score :{1,-10}   ", Musiclist[chkNumber-1].MusicName, Musiclist[chkNumber-1].MusicScore);
                 }
 
                 Console.SetCursorPosition(24, 18);
                 Console.Write("                              ");
                 Console.SetCursorPosition(24, 18);
-                Console.Write("{0,-13}          Score :{1,-10}", Musiclist[chkNumber].MusicName, Musiclist[chkNumber].MusicScore);
+                Console.Write("{0,-13}          Score :{1,-10} speed : {2,-2}", Musiclist[chkNumber].MusicName, Musiclist[chkNumber].MusicScore, speed);
 
                 if (chkNumber !=Musiclist.Count-1)
                 {
@@ -66,11 +67,21 @@ namespace practice0615
                     case ConsoleKey.UpArrow:
                         if(chkNumber == 0){ break; }
                         chkNumber--;
+                        speed = 1;
                     break;
 
                     case ConsoleKey.DownArrow:
                         if (chkNumber == Musiclist.Count-1) { break; }
                         chkNumber++;
+                        speed = 1;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        if(speed == 1) { break; }
+                        speed--;
+                    break;
+                    case ConsoleKey.RightArrow:
+                        if(speed == 3) { break; }
+                        speed++;
                     break;
                     case ConsoleKey.Enter:
                         gameStart(chkNumber);
@@ -80,7 +91,7 @@ namespace practice0615
         }
         public void gameStart(int chkNumber)
         {
-            int subScore = gamePlay.Play(Musiclist[chkNumber].MusicName,chkNumber) ;
+            int subScore = gamePlay.Play(Musiclist[chkNumber].MusicName,chkNumber,speed) ;
         
             if(subScore > Musiclist[chkNumber].MusicScore)
             {
