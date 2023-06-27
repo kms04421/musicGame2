@@ -11,9 +11,15 @@ namespace practice0615
     {
         static void Main(string[] args)
         {
-           
-           GamePlay gamePlay = new GamePlay();
-           gamePlay.Play();
+
+            /*test test = new test();
+            test.TEST();*/
+
+          /*   GamePlay gamePlay = new GamePlay();
+             gamePlay.Play();*/
+
+            MusicManu musicManu = new MusicManu();
+            musicManu.Manu();
         }
 
 

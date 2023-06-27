@@ -14,42 +14,71 @@ namespace practice0615
         int[,] MusicAllNote = new int[50, 50];
         int countX = 0;//스왑라인 X
         int countY = 0;//스왑라인 y
-
+        int score = 0;//점수
         int combo = 0; // 콤보 
-
-        int notLine = 0; // 음악 라인
-        int musicChk = 0; // 음악체크
+        int scoreType = 0;
+        
+      
         object lockObject = new object(); // 동시에 접근하는 변수 처리
         List<ConsoleKey> pressedKeys = new List<ConsoleKey>();// 동시에 눌린 키들을 저장할 리스트
 
-        public void Play()
+        public int Play(string muName ,int muNumber)
         {
-            
+            score = 0;//점수
+            int notLine = 0; // 음악 라인
+            musicList musicList = new musicList();//음악재생
             NoteMove noteMove = new NoteMove();// 뮤직 노트
             musicMap musicMap = new musicMap();// 뮤직 게임 화면 
             // 타이머 생성 및 시작
             TimerCallback callback = TimerCallbackMethod; // 노트 스왑
-            timer = new Timer(callback, null, 0, 20); // 1초(1000밀리초) 간격으로 콜백 메서드 실행
-
+            timer = new Timer(callback, null, 0, 17); // 1초(1000밀리초) 간격으로 콜백 메서드 실행
+            
             musicMap.GameMap(ref firstf); //게임 맵
             Console.CursorVisible = false;
 
             Thread inputThread = new Thread(ReadInput); // 키입력
             inputThread.Start(); //키입력 시작 
+            musicMap.Demap();
+            musicMap.DrawScoreLine();
 
-            Console.SetCursorPosition(45, 20);
+            Console.SetCursorPosition(50, 20);
             Console.Write("Combo");
-
-
+            Console.SetCursorPosition(50, 15);
+            Console.Write("score");
+            musicList.musicStart(1 , muName);// 음악시작
             //노트 넣기
-            MusicAllNote =noteMove.MusicNote(musicChk);
+            MusicAllNote =noteMove.MusicNote(muName);
+
+            
+           
             while (true)
             {
-
-              
-                Console.SetCursorPosition(45, 22);
+            
+                Console.SetCursorPosition(50, 17);
+                Console.Write(score);
+                Console.SetCursorPosition(50, 22);
+                Console.Write("      ");
+                Console.SetCursorPosition(50, 22);          
                 Console.Write(combo);
 
+                Console.SetCursorPosition(50, 12);
+                Console.Write("         ");
+                Console.SetCursorPosition(50, 12);
+                if (scoreType == 1)
+                {
+                    Console.Write("Perfect");
+                }else if (scoreType == 2)
+                {
+                    Console.Write("Good");
+                }
+                else if (scoreType == 3)
+                {
+                    Console.Write("Miss");
+                }
+               
+
+                musicMap.Anim();
+                // 노트 입력
                 for (int j = 1; j < 22; j++)
                 {
 
@@ -81,45 +110,39 @@ namespace practice0615
                         }
 
                         //마지막 스왑 노트 지움
-                        firstf[28, j] = "  ";
+                        firstf[30, j] = "  ";
                     }            
 
                 }
-                if (countX == 28)
+                if (firstf[29, 2] == "==" ||firstf[29, 7] == "==" ||firstf[29, 13] == "=="||firstf[29, 18] == "==")
+                {
+                    combo =0;
+                    scoreType = 3;
+                }
+
+                if (countX == 30)
                 {
                     notLine++;
                     countX = 0;
-                }
 
+                   
+                }
+                if(notLine == 125)
+                {
 
-                if (ConcurrentKeysPressed(ConsoleKey.Q, ConsoleKey.W))
-                {
-                    //처리 메서스 넣기                  
+                    timer.Dispose();
+                    
+                    break;
                 }
-                else if (ConcurrentKeysPressed(ConsoleKey.Q, ConsoleKey.E))
-                {
-                    //처리 메서스 넣기                  
-                }
-                else if (ConcurrentKeysPressed(ConsoleKey.Q, ConsoleKey.R))
-                {
-                    //처리 메서스 넣기                  
-                }
-                else if (ConcurrentKeysPressed(ConsoleKey.W, ConsoleKey.E))
-                {
-                    //처리 메서스 넣기                  
-                }
-                else if (ConcurrentKeysPressed(ConsoleKey.W, ConsoleKey.R))
-                {
-                    //처리 메서스 넣기                  
-                }
-                else if (ConcurrentKeysPressed(ConsoleKey.E, ConsoleKey.R))
-                {
-                    //처리 메서스 넣기                  
-                }
+                
                 Console.SetCursorPosition(0, 0);
                 musicMap.GameView(ref firstf);
-            
+
+                musicMap.DrawScoreLine();
             }
+            return score;
+
+
         }
 
         //리얼 타입 노트 내려가는 로직
@@ -183,6 +206,16 @@ namespace practice0615
             {
                 if (firstf[28, 2] == "==" || firstf[27, 2] == "=="|| firstf[26, 2] == "=="|| firstf[25, 2] == "==")
                 {
+                    if (firstf[28, 2] == "==" || firstf[27, 2] == "==")
+                    {
+                        score += 200;
+                        scoreType = 1;
+                    }
+                    if (firstf[26, 2] == "=="|| firstf[25, 2] == "==")
+                    {
+                        score += 100;
+                        scoreType = 2;
+                    }
 
                     for (int j = 1; j < 6; j++)
                     {
@@ -196,22 +229,25 @@ namespace practice0615
                         {
 
                             countY = j;
+                            firstf[25, j] = "  ";
+                            firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
                             firstf[28, j] = "  ";
-                            firstf[29, j] = "  ";
+                          
                         }
 
 
                     }
 
                     combo++;
-                    return;
+                    
 
 
                 }
                 else
                 {
-                    combo =0;
+                  
+                    
                 }
             }
 
@@ -219,7 +255,16 @@ namespace practice0615
             {
                 if (firstf[28, 8] == "==" || firstf[27, 8] == "=="|| firstf[26, 8] == "=="|| firstf[25, 8] == "==")
                 {
-
+                    if(firstf[28, 8] == "==" || firstf[27, 8] == "==")
+                    {
+                        score += 200;
+                        scoreType = 1;
+                    }
+                    if (firstf[26, 8] == "=="|| firstf[25, 8] == "==")
+                    {
+                        score += 100;
+                        scoreType = 2;
+                    }
                     for (int j = 5; j < 10; j++)
                     {
 
@@ -231,23 +276,25 @@ namespace practice0615
                         else
                         {
 
-                            countY = j;
+                   
+                            firstf[25, j] = "  ";
+                            firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
                             firstf[28, j] = "  ";
-                            firstf[29, j] = "  ";
                         }
 
 
                     }
 
                     combo++;
-                    return;
+                  
 
 
                 }
                 else
                 {
-                    combo =0;
+                  
+                  
                 }
             }
 
@@ -255,7 +302,16 @@ namespace practice0615
             {
                 if (firstf[28, 12] == "==" || firstf[27, 12] == "=="|| firstf[26, 12] == "=="|| firstf[25, 12] == "==")
                 {
-
+                    if (firstf[28, 12] == "==" || firstf[27, 12] == "==")
+                    {
+                        scoreType = 1;
+                        score += 200;
+                    }
+                    if (firstf[26, 12] == "=="|| firstf[25, 12] == "==")
+                    {
+                        scoreType = 2;
+                        score += 100;
+                    }
                     for (int j = 10; j < 15; j++)
                     {
 
@@ -267,23 +323,24 @@ namespace practice0615
                         else
                         {
 
-                            countY = j;
+                          
+                            firstf[25, j] = "  ";
+                            firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
                             firstf[28, j] = "  ";
-                            firstf[29, j] = "  ";
                         }
 
 
                     }
 
                     combo++;
-                    return;
-
+                  
 
                 }
                 else
                 {
-                    combo =0;
+             
+                 
                 }
             }
 
@@ -291,7 +348,16 @@ namespace practice0615
             {
                 if (firstf[28, 18] == "==" || firstf[27, 18] == "=="|| firstf[26, 18] == "=="|| firstf[25, 18] == "==")
                 {
-
+                    if (firstf[28, 18] == "==" || firstf[27, 18] == "==")
+                    {
+                        score += 200;
+                        scoreType = 1;
+                    }
+                    if (firstf[26, 18] == "=="|| firstf[25, 18] == "==")
+                    {
+                        score += 100;
+                        scoreType = 2;
+                    }
                     for (int j = 15; j < 20; j++)
                     {
 
@@ -303,23 +369,24 @@ namespace practice0615
                         else
                         {
 
-                            countY = j;
+                      
+                            firstf[25, j] = "  ";
+                            firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
                             firstf[28, j] = "  ";
-                            firstf[29, j] = "  ";
                         }
 
 
                     }
 
                     combo++;
-                    return;
+                 
 
 
                 }
                 else
                 {
-                    combo =0;
+                   
                 }
             }
             
@@ -347,7 +414,7 @@ namespace practice0615
                 return true;
             }
 
-            return false;
+           
         }
 
 
