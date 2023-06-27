@@ -19,9 +19,9 @@ namespace practice0615
         {
             
             musicMap musicMap = new musicMap();
-            Musiclist.Add(new MusicSt("월광", 0));
-            Musiclist.Add(new MusicSt("Lift You Up", 0));
-            Musiclist.Add(new MusicSt("pick", 0));
+            Musiclist.Add(new MusicSt("RinneCooking Time", 0));
+            Musiclist.Add(new MusicSt("Rinneinfinite promise", 0));
+            Musiclist.Add(new MusicSt("CROSS†OVER", 0));
             while (true)
             {
                 Console.CursorVisible = false;
