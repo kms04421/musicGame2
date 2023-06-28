@@ -8,6 +8,7 @@ namespace practice0615
 {
     public class MusicSt
     {
+
         public string MusicName { get; set; }
         public int MusicScore { get; set; } 
 

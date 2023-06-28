@@ -281,10 +281,11 @@ namespace cshap
             Console.WriteLine("└──────────────────────────────────────────────────────────────────────────────────────────┘");
         }
 
-        public void catDance()
+    
+        public void comDance()
         {
-
+            Console.WriteLine(" ");
         }
 
     }
-}
+} 

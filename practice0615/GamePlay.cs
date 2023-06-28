@@ -3,13 +3,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
+using WMPLib;
+
 namespace practice0615
 {
     public class GamePlay
     {
-       
+        Task musicTask = default;
         Timer timer;
-        Timer timer2;
+
         string[,] firstf = new string[50, 50];
         string[,] musicNote = new string[50, 50];
         int[,] MusicAllNote = new int[50, 50];
@@ -21,6 +24,7 @@ namespace practice0615
         int combo = 0; // 콤보 
         int scoreType = 0;
         int notLine = 0;
+        
         musicMap musicMap = new musicMap();// 뮤직 게임 화면 
         musicList musicList = new musicList();//음악재생
         NoteMove noteMove = new NoteMove();// 뮤직 노트
@@ -28,8 +32,18 @@ namespace practice0615
         object lockObject = new object(); // 동시에 접근하는 변수 처리
         List<ConsoleKey> pressedKeys = new List<ConsoleKey>();// 동시에 눌린 키들을 저장할 리스트
 
+
+
         public int Play(string muName ,int muNumber,int speed)
         {
+            bool IsAlive = true;
+            int setTime = 180;
+            
+            //음악종료 로직 
+            //
+            
+
+            int maxLine = 125;
             Console.SetWindowSize(100, 40);
             score = 0;//점수
             notLine = 0; // 음악 라인
@@ -37,14 +51,17 @@ namespace practice0615
             int timerspeed = 20;
             if (speed == 1)
             {
+                maxLine = 80;
                 timerspeed = 18;
             }
             else if (speed == 2)
             {
+                maxLine = 100;
                 timerspeed = 16;
             }
             else if (speed == 3)
             {
+                maxLine = 125;
                 timerspeed = 14;
             }
             // 타이머 생성 및 시작
@@ -65,31 +82,33 @@ namespace practice0615
             Console.Write("Combo");
             Console.SetCursorPosition(50, 15);
             Console.Write("score");
-            musicList.musicStart(1 , muName);// 음악시작
+
+            WindowsMediaPlayer player = new WindowsMediaPlayer();
+
+            musicTask =  musicList.MusicBank(1, muName, player, 0, setTime, IsAlive);
             //노트 넣기
             MusicAllNote =noteMove.MusicNote(muName);
 
-          
-            
+            CancellationTokenSource musicCancleControler = new CancellationTokenSource();
+
+            CancellationToken musicCancleToken = musicCancleControler.Token;
+            //음악종료 
+            Task.Run(() => { musicTask.Start(); }, musicCancleToken);
             while (true)
             {
-
-
+               
                 musicMap.DrawScoreLine();
                 if (firstf[30, 2] == "==" || firstf[30, 7] == "==" || firstf[30, 13] == "==" || firstf[30, 18] == "==")
                 {
                     combo = 0;
                     scoreType = 3;
                 }
-              
-               
 
-
-                if (notLine == 125)
+                //maxLine
+                if (notLine == maxLine)
                 {
-
-                    timer.Dispose();
                     
+                    timer.Dispose();                   
                     break;
                 }
                 Console.SetCursorPosition(50, 17);
@@ -121,11 +140,17 @@ namespace practice0615
                 musicMap.GameView(ref firstf);
 
                 musicMap.DrawScoreLine();
-            }
+            }//while종료
+
+            player.controls.stop();
+            player.close();
+
+            musicCancleControler.Cancel();
+
             return score;
 
 
-        }
+        }// Play(string muName ,int muNumber,int speed)종료
 
         //리얼 타입 노트 내려가는 로직
         void TimerCallbackMethod(object state)
@@ -141,43 +166,43 @@ namespace practice0615
                 else
                 {
 
-                    countY = j;
-                    // 뮤직 노트 체크
+                countY = j;
+                // 뮤직 노트 체크
 
-                    if (MusicAllNote[notLine, 0] == 1 && j > 0 && j < 5)
-                    {
-                        firstf[0, j] = "==";
-                        firstf[0, j+1] = "==";
-                        firstf[0, j+2] = "==";
-                        firstf[0, j+3] = "==";
-                    }
-                    if (MusicAllNote[notLine, 1] == 1 && j > 5 && j < 10)
-                    {
-                        firstf[0, j] = "==";
-                        firstf[0, j + 1] = "==";
-                        firstf[0, j + 2] = "==";
-                        firstf[0, j + 3] = "==";
-                    }
-                    if (MusicAllNote[notLine, 2] == 1 && j > 10 && j < 15)
-                    {
-                        firstf[0, j] = "==";
-                        firstf[0, j + 1] = "==";
-                        firstf[0, j + 2] = "==";
-                        firstf[0, j + 3] = "==";
-                    }
-                    if (MusicAllNote[notLine, 3] == 1 && j > 15 && j < 20)
-                    {
-                        firstf[0, j] = "==";
-                        firstf[0, j + 1] = "==";
-                        firstf[0, j + 2] = "==";
-                        firstf[0, j + 3] = "==";
-                    }
+                if (MusicAllNote[notLine, 0] == 1 && j > 0 && j < 5)
+                {
+                    firstf[0, j] = "==";
+                    firstf[0, j+1] = "==";
+                    firstf[0, j+2] = "==";
+                    firstf[0, j+3] = "==";
+                }
+                if (MusicAllNote[notLine, 1] == 1 && j > 5 && j < 10)
+                {
+                    firstf[0, j] = "==";
+                    firstf[0, j + 1] = "==";
+                    firstf[0, j + 2] = "==";
+                    firstf[0, j + 3] = "==";
+                }
+                if (MusicAllNote[notLine, 2] == 1 && j > 10 && j < 15)
+                {
+                    firstf[0, j] = "==";
+                    firstf[0, j + 1] = "==";
+                    firstf[0, j + 2] = "==";
+                    firstf[0, j + 3] = "==";
+                }
+                if (MusicAllNote[notLine, 3] == 1 && j > 15 && j < 20)
+                {
+                    firstf[0, j] = "==";
+                    firstf[0, j + 1] = "==";
+                    firstf[0, j + 2] = "==";
+                    firstf[0, j + 3] = "==";
+                }
 
-                    //마지막 스왑 노트 지움
-                    firstf[30, j] = "  ";
-                    firstf[30, j+1] = "  ";
-                    firstf[30, j+2] = "  ";
-                    firstf[30, j+3] = "  ";
+                //마지막 스왑 노트 지움
+                firstf[30, j] = "  ";
+                firstf[30, j+1] = "  ";
+                firstf[30, j+2] = "  ";
+                firstf[30, j+3] = "  ";
                 }
 
             }
@@ -272,14 +297,14 @@ namespace practice0615
             //q입력시
             if (Key.KeyChar == 'q' ||Key.KeyChar == 'Q')
             {
-                if (firstf[29, 2] == "==" ||firstf[28, 2] == "==" || firstf[27, 2] == "=="|| firstf[26, 2] == "=="|| firstf[25, 2] == "==")
+                if (firstf[29, 2] == "==" ||firstf[28, 2] == "==" || firstf[27, 2] == "=="|| firstf[26, 2] == "=="|| firstf[25, 2] == "=="||firstf[30, 2] == "==")
                 {
                     if (firstf[29, 2] == "==" || firstf[28, 2] == "==" || firstf[27, 2] == "==")
                     {
                         score += 200;
                         scoreType = 1;
                     }
-                    if (firstf[26, 2] == "=="|| firstf[25, 2] == "==")
+                    if (firstf[26, 2] == "=="|| firstf[25, 2] == "=="||firstf[30, 2] == "==")
                     {
                         score += 100;
                         scoreType = 2;
@@ -321,14 +346,14 @@ namespace practice0615
 
             else if (Key.KeyChar == 'w' ||Key.KeyChar == 'W')
             {
-                if (firstf[29, 8] == "==" || firstf[28, 8] == "==" || firstf[27, 8] == "=="|| firstf[26, 8] == "=="|| firstf[25, 8] == "==")
+                if (firstf[29, 8] == "==" || firstf[28, 8] == "==" || firstf[27, 8] == "=="|| firstf[26, 8] == "=="|| firstf[25, 8] == "=="||firstf[30, 8] == "==")
                 {
                     if(firstf[29, 8] == "==" || firstf[28, 8] == "==" || firstf[27, 8] == "==")
                     {
                         score += 200;
                         scoreType = 1;
                     }
-                    if (firstf[26, 8] == "=="|| firstf[25, 8] == "==")
+                    if (firstf[26, 8] == "=="|| firstf[25, 8] == "=="||firstf[30, 8] == "==")
                     {
                         score += 100;
                         scoreType = 2;
@@ -368,14 +393,14 @@ namespace practice0615
 
             else if (Key.KeyChar == 'e' ||Key.KeyChar == 'E')
             {
-                if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "=="|| firstf[26, 12] == "=="|| firstf[25, 12] == "==")
+                if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "=="|| firstf[26, 12] == "=="|| firstf[25, 12] == "=="||firstf[30, 12] == "==")
                 {
                     if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "==")
                     {
                         scoreType = 1;
                         score += 200;
                     }
-                    if (firstf[26, 12] == "=="|| firstf[25, 12] == "==")
+                    if (firstf[26, 12] == "=="|| firstf[25, 12] == "=="||firstf[30, 12] == "==")
                     {
                         scoreType = 2;
                         score += 100;
@@ -414,14 +439,14 @@ namespace practice0615
 
             else if (Key.KeyChar == 'r' ||Key.KeyChar == 'R')
             {
-                if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "=="|| firstf[26, 18] == "=="|| firstf[25, 18] == "==")
+                if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "=="|| firstf[26, 18] == "=="|| firstf[25, 18] == "=="||firstf[30, 18] == "==")
                 {
                     if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "==")
                     {
                         score += 200;
                         scoreType = 1;
                     }
-                    if (firstf[26, 18] == "=="|| firstf[25, 18] == "==")
+                    if (firstf[26, 18] == "=="|| firstf[25, 18] == "=="||firstf[30, 18] == "==")
                     {
                         score += 100;
                         scoreType = 2;
