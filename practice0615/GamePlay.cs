@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WMPLib;
@@ -11,57 +13,61 @@ namespace practice0615
     public class GamePlay
     {
         Task musicTask = default;
-        Timer timer;
-
+     
+        int comboCount = 0;
         string[,] firstf = new string[50, 50];
         string[,] musicNote = new string[50, 50];
         int[,] MusicAllNote = new int[50, 50];
         int countX = 0;//스왑라인 X
         int countY = 0;//스왑라인 y
-        int countX2 = 0;//스왑라인 X
-        int countY2 = 0;//스왑라인 y
+
         int score = 0;//점수
         int combo = 0; // 콤보 
         int scoreType = 0;
         int notLine = 0;
-        
+        int HP = 20;
         musicMap musicMap = new musicMap();// 뮤직 게임 화면 
-        musicList musicList = new musicList();//음악재생
-        NoteMove noteMove = new NoteMove();// 뮤직 노트
+       
+     
 
         object lockObject = new object(); // 동시에 접근하는 변수 처리
         List<ConsoleKey> pressedKeys = new List<ConsoleKey>();// 동시에 눌린 키들을 저장할 리스트
 
-
+        MusicSetting musicSetting = new MusicSetting();
 
         public int Play(string muName ,int muNumber,int speed)
         {
+            musicList musicList = new musicList();//음악재생
+            string[,] musicNote = new string[50, 50];
+            NoteMove noteMove = new NoteMove();// 뮤직 노트
+            Timer timer;
             bool IsAlive = true;
             int setTime = 180;
-            
+            Console.OutputEncoding = Encoding.UTF8;
             //음악종료 로직 
             //
-            
+            countX = 0;//스왑라인 X
+            countY = 0;//스왑라인 y
 
             int maxLine = 125;
-            Console.SetWindowSize(100, 40);
+            Console.SetWindowSize(120, 40);
             score = 0;//점수
             notLine = 0; // 음악 라인
 
             int timerspeed = 20;
             if (speed == 1)
             {
-                maxLine = 80;
+                maxLine = 140;
                 timerspeed = 18;
             }
             else if (speed == 2)
             {
-                maxLine = 100;
+                maxLine = 140;
                 timerspeed = 16;
             }
             else if (speed == 3)
             {
-                maxLine = 125;
+                maxLine = 140;
                 timerspeed = 14;
             }
             // 타이머 생성 및 시작
@@ -90,18 +96,116 @@ namespace practice0615
             MusicAllNote =noteMove.MusicNote(muName);
 
             CancellationTokenSource musicCancleControler = new CancellationTokenSource();
-
+            Random random = new Random();
             CancellationToken musicCancleToken = musicCancleControler.Token;
             //음악종료 
+            HP = 20;//hp
+            int missCount = 0;
+            int lose = 0;
+            int musicDash = 0;
             Task.Run(() => { musicTask.Start(); }, musicCancleToken);
             while (true)
             {
+                musicDash++;
+                if (HP == 0)
+                {
+                    lose= 1;
+                    break;
+                }
+                int randMax = 7;
+
+                if (combo == 0)
+                {
+                    randMax = 1;
+
+                }
+                if (musicDash% 3 == 0)
+                {
+                    for (int j = 0; j< 7; j++)
+                    {
+                        Console.SetCursorPosition(50, 30-j);
+                        Console.Write("                                         ");
+                    }
+
+                    for (int i = 0; i < 20; i++)
+                    {
+                        
+                        for (int j = 0; j< random.Next(1, randMax); j++)
+                        {
+                            Console.SetCursorPosition(50+i*2, 30-j);
+                            Console.ForegroundColor = ConsoleColor.DarkGray;
+                            if (combo >= 10)
+                            {
+                               Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                            }
+                            if (combo > 20)
+                            {
+                                if(i%2 == 0)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                }
+                                else
+                                {
+                                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                                }
+                                
+                            }
+                            Console.Write("■");
+                            Console.ResetColor();
+
+                        }
+                    }
+                }
+                
+                if (missCount == 1)
+                {                                  
+                    HP-=1;
+                    missCount=0;
+                }
+
+              
+
+                if (comboCount == 5)
+                {
+                    if (HP < 20)
+                    {
+                        HP =HP+1;
+                    }
+                    comboCount = 0;
+                }
                
+                for (int i = 0; i <20; i++)
+                {
+                    Console.SetCursorPosition(2, 31-i);
+                    Console.Write("  ");
+                  
+                    
+                }
+
+                for (int i = 0; i <HP; i++)
+                {
+                    
+                    Console.SetCursorPosition(2, 31-i);
+                    if(HP <5)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else if (HP <10)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                    }else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }                  
+                    Console.Write("□");
+                }
                 musicMap.DrawScoreLine();
                 if (firstf[30, 2] == "==" || firstf[30, 7] == "==" || firstf[30, 13] == "==" || firstf[30, 18] == "==")
                 {
+                    missCount++;
                     combo = 0;
                     scoreType = 3;
+                    comboCount = 0;
                 }
 
                 //maxLine
@@ -122,6 +226,7 @@ namespace practice0615
                 Console.Write("         ");
                 Console.SetCursorPosition(50, 12);
 
+            
 
                 if (scoreType == 1)
                 {
@@ -146,7 +251,11 @@ namespace practice0615
             player.close();
 
             musicCancleControler.Cancel();
-
+            if(lose ==1)
+            {
+                timer.Dispose();
+                return -10;
+            }
             return score;
 
 
@@ -333,7 +442,7 @@ namespace practice0615
                     }
 
                     combo++;
-                    
+                    comboCount++;
 
 
                 }
@@ -380,7 +489,7 @@ namespace practice0615
                     }
 
                     combo++;
-                  
+                    comboCount++;
 
 
                 }
@@ -427,7 +536,7 @@ namespace practice0615
                     }
 
                     combo++;
-                  
+                    comboCount++;
 
                 }
                 else
@@ -473,19 +582,25 @@ namespace practice0615
                     }
 
                     combo++;
-                 
+                    comboCount++;
 
 
                 }
-                else
+                else 
                 {
-                   
+                    
                 }
+            }
+            else if(Key.Key == ConsoleKey.Escape)
+            {
+
+                HP = 0;
+
             }
             
 
 
-        }
+        }//키입력받아서 처리 끝
 
         
         // 특정 키가 눌렸는지 확인하는 메서드

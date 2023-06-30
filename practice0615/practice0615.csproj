@@ -46,6 +46,7 @@
     <Compile Include="musicList.cs" />
     <Compile Include="MusicManu.cs" />
     <Compile Include="MusicMap.cs" />
+    <Compile Include="MusicSetting.cs" />
     <Compile Include="MusicSt.cs" />
     <Compile Include="NotePlay.cs" />
     <Compile Include="GamePlay.cs" />

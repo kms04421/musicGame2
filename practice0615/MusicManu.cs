@@ -31,9 +31,17 @@ namespace practice0615
             Musiclist.Add(new MusicSt("RinneCooking Time", 0));
             Musiclist.Add(new MusicSt("Rinneinfinite promise", 0));
             Musiclist.Add(new MusicSt("CROSS†OVER", 0));
+            Musiclist.Add(new MusicSt("NIGHT DANCERMV", 0));
+            Musiclist.Add(new MusicSt("RADWIMPS", 0));
+            Musiclist.Add(new MusicSt("Dangerously", 0));
+            int musicbar = 0;
+
+            
             while (true)
             {
 
+                
+                Console.SetWindowSize(120, 40);
                 musicTask =  music.MusicBank(1, Musiclist[chkNumber].MusicName, player, 0, setTime, IsAlive);
                 //음악종료 로직 
                 //
@@ -43,19 +51,68 @@ namespace practice0615
                 //음악종료 
                 Console.CursorVisible = false;
 
+                Console.ForegroundColor = ConsoleColor.Blue;
+                musicMap.musicMaunu();
 
-                if(chkNumber == 0)
+
+               
+
+                Console.ResetColor();
+                if(Musiclist[chkNumber].MusicName == "RinneCooking Time")
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    musicMap.CoookTime();
+                    Console.ResetColor();
+                }else if(Musiclist[chkNumber].MusicName == "Rinneinfinite promise")
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    musicMap.Rinneinfinite();
+                    Console.ResetColor();
+                }else if (Musiclist[chkNumber].MusicName=="CROSS†OVER")
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    musicMap.CROSSOVER();
+                    Console.ResetColor();
+                }
+                else if (Musiclist[chkNumber].MusicName=="NIGHT DANCERMV")
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    musicMap.NIGHTDANCERMV();
+                    Console.ResetColor();
+                }else if (Musiclist[chkNumber].MusicName == "RADWIMPS")
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    musicMap.RADWIMPS();
+                    Console.ResetColor();
+                }
+                else if (Musiclist[chkNumber].MusicName == "Dangerously")
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    musicMap.Dangerously();
+                    Console.ResetColor();
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                musicMap.cursor();
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                if (chkNumber == 0)
+                {
+                    
                     musicMap.musicMaunuStart();
+                    
                 }
                 else if (chkNumber == Musiclist.Count-1)
                 {
+                    
                     musicMap.musicMaunuLast();
-                }else
+                   
+                }
+                else
                 {
-                    musicMap.musicMaunu();
-                }             
-              
+                    musicMap.selectmenu();
+                }
+                Console.ResetColor();
 
                 if (chkNumber != 0)
                 {
@@ -64,7 +121,7 @@ namespace practice0615
                     Console.SetCursorPosition(28, 11);
                     Console.Write("{0,-13}          Score :{1,-10}   ", Musiclist[chkNumber-1].MusicName, Musiclist[chkNumber-1].MusicScore);
                 }
-
+               
                 Console.SetCursorPosition(24, 18);
                 Console.Write("                              ");
                 Console.SetCursorPosition(24, 18);
@@ -84,6 +141,10 @@ namespace practice0615
                 {
                     case ConsoleKey.UpArrow:
                         if(chkNumber == 0){ break; }
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        //musicMap.musicMaunuSwap();
+                        Console.ResetColor();
+                        Thread.Sleep(100);
                         chkNumber--;
                         speed = 1;
                         musicCancleControler.Cancel();
@@ -91,6 +152,10 @@ namespace practice0615
 
                     case ConsoleKey.DownArrow:
                         if (chkNumber == Musiclist.Count-1) { break; }
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                       // musicMap.musicMaunuSwap();
+                        Console.ResetColor();
+                        Thread.Sleep(100);
                         chkNumber++;
                         speed = 1;
                         musicCancleControler.Cancel();

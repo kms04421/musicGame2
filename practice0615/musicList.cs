@@ -11,7 +11,7 @@ namespace practice0615
             bool IsAlive = true;
            
             int mutime = 0;
-            int setTime = 180;
+            int setTime = 500;
             WindowsMediaPlayer player = new WindowsMediaPlayer();
          
 
@@ -54,6 +54,18 @@ namespace practice0615
                 else if (musicName=="SellBuyMusic")
                 {
                     player_.URL = @"C:\musicBox\SellBuyMusic.mp3";
+                }
+                else if (musicName=="NIGHT DANCERMV")
+                {
+                    player_.URL = @"C:\musicBox\NIGHT DANCERMV.mp3";
+                }
+                else if (musicName=="Dangerously")
+                {
+                    player_.URL = @"C:\musicBox\Dangerously.mp3";
+                }
+                else if (musicName=="RADWIMPS")
+                {
+                    player_.URL = @"C:\musicBox\RADWIMPS.mp3";
                 }
                 while (true)
                     {
