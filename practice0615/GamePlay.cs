@@ -397,18 +397,13 @@ namespace practice0615
         //키입력시 처리 메서드
          void OnKeyPressed(ConsoleKeyInfo Key)
         {
-            lock (lockObject)
-            {
-                // 눌린 키를 리스트에 추가
-                pressedKeys.Add(Key.Key);
-            }
-
+         
             //q입력시
             if (Key.KeyChar == 'q' ||Key.KeyChar == 'Q')
             {
-                if (firstf[29, 2] == "==" ||firstf[28, 2] == "==" || firstf[27, 2] == "=="|| firstf[26, 2] == "=="|| firstf[25, 2] == "=="||firstf[30, 2] == "==")
+                if (firstf[29, 2] == "==" ||firstf[28, 2] == "==" || firstf[27, 2] == "=="|| firstf[26, 2] == "=="|| firstf[25, 2] == "=="||firstf[30, 2] == "=="|| firstf[24, 2] == "==")
                 {
-                    if (firstf[29, 2] == "==" || firstf[28, 2] == "==" || firstf[27, 2] == "==")
+                    if (firstf[29, 2] == "==" || firstf[28, 2] == "==" || firstf[27, 2] == "=="|| firstf[24, 2] == "==")
                     {
                         score += 200;
                         scoreType = 1;
@@ -431,6 +426,7 @@ namespace practice0615
                         {
 
                             countY = j;
+                            firstf[24, j] = "  ";
                             firstf[25, j] = "  ";
                             firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
@@ -455,7 +451,7 @@ namespace practice0615
 
             else if (Key.KeyChar == 'w' ||Key.KeyChar == 'W')
             {
-                if (firstf[29, 8] == "==" || firstf[28, 8] == "==" || firstf[27, 8] == "=="|| firstf[26, 8] == "=="|| firstf[25, 8] == "=="||firstf[30, 8] == "==")
+                if (firstf[29, 8] == "==" || firstf[28, 8] == "==" || firstf[27, 8] == "=="|| firstf[26, 8] == "=="|| firstf[25, 8] == "=="||firstf[30, 8] == "=="|| firstf[24, 8] == "==")
                 {
                     if(firstf[29, 8] == "==" || firstf[28, 8] == "==" || firstf[27, 8] == "==")
                     {
@@ -478,7 +474,7 @@ namespace practice0615
                         else
                         {
 
-                   
+                            firstf[24, j] = "  ";
                             firstf[25, j] = "  ";
                             firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
@@ -502,9 +498,9 @@ namespace practice0615
 
             else if (Key.KeyChar == 'e' ||Key.KeyChar == 'E')
             {
-                if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "=="|| firstf[26, 12] == "=="|| firstf[25, 12] == "=="||firstf[30, 12] == "==")
+                if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "=="|| firstf[26, 12] == "=="|| firstf[25, 12] == "=="||firstf[30, 12] == "=="|| firstf[24, 12] == "==")
                 {
-                    if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "==")
+                    if (firstf[29, 12] == "==" || firstf[28, 12] == "==" || firstf[27, 12] == "=="|| firstf[24, 12] == "==")
                     {
                         scoreType = 1;
                         score += 200;
@@ -525,7 +521,7 @@ namespace practice0615
                         else
                         {
 
-                          
+                            firstf[24, j] = "  ";
                             firstf[25, j] = "  ";
                             firstf[26, j] = "  ";
                             firstf[27, j] = "  ";
@@ -548,9 +544,9 @@ namespace practice0615
 
             else if (Key.KeyChar == 'r' ||Key.KeyChar == 'R')
             {
-                if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "=="|| firstf[26, 18] == "=="|| firstf[25, 18] == "=="||firstf[30, 18] == "==")
+                if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "=="|| firstf[26, 18] == "=="|| firstf[25, 18] == "=="||firstf[30, 18] == "==" || firstf[24, 18] == "==")
                 {
-                    if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "==")
+                    if (firstf[29, 18] == "==" || firstf[28, 18] == "==" || firstf[27, 18] == "=="|| firstf[24, 18] == "==")
                     {
                         score += 200;
                         scoreType = 1;
@@ -571,7 +567,7 @@ namespace practice0615
                         else
                         {
 
-                      
+                            firstf[24, j] = "  ";
                             firstf[25, j] = "  ";
                             firstf[26, j] = "  ";
                             firstf[27, j] = "  ";

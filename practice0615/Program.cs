@@ -42,7 +42,7 @@ namespace practice0615
             musicMap.Djmax();
 
             Console.SetCursorPosition(30, 28);
-            Console.WriteLine("아무키나 입력시 시작!");
+            Console.WriteLine("아무키나 입력 시 시작!");
             ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
             if(consoleKeyInfo != null)
             {

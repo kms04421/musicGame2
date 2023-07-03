@@ -47,7 +47,7 @@ namespace practice0615
                 //
                 CancellationTokenSource musicCancleControler = new CancellationTokenSource();
                 CancellationToken musicCancleToken = musicCancleControler.Token;
-                Task.Run(() => { musicTask.Start(); }, musicCancleToken);
+                Task.Run(() => { musicTask.Start(); }, musicCancleToken); 
                 //음악종료 
                 Console.CursorVisible = false;
 
